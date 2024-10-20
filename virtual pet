@@ -1,0 +1,98 @@
+import tkinter as tk
+from tkinter import messagebox
+from PIL import Image, ImageTk  # To handle images
+
+class VirtualPet:
+    def __init__(self, name):
+        self.name = name
+        self.hunger = 50
+        self.happiness = 50
+        self.energy = 50
+
+    def feed(self):
+        if self.hunger > 0:
+            self.hunger -= 10
+            return f"You fed {self.name}. Hunger decreased."
+        else:
+            return f"{self.name} is not hungry."
+
+    def play(self):
+        if self.energy > 10:
+            self.happiness += 10
+            self.energy -= 10
+            return f"You played with {self.name}. Happiness increased."
+        else:
+            return f"{self.name} is too tired to play."
+
+    def sleep(self):
+        self.energy += 20
+        self.hunger += 10
+        return f"{self.name} slept. Energy increased, but hunger increased too."
+
+    def pass_time(self):
+        self.hunger += 5
+        self.happiness -= 5
+        self.energy -= 5
+
+def update_stats():
+    """Update the sliders in the GUI."""
+    hunger_slider.set(pet.hunger)
+    happiness_slider.set(pet.happiness)
+    energy_slider.set(pet.energy)
+
+def feed_pet():
+    """Handle the 'Feed' button press."""
+    msg = pet.feed()
+    messagebox.showinfo("Feed", msg)
+    pet.pass_time()
+    update_stats()
+
+def play_with_pet():
+    """Handle the 'Play' button press."""
+    msg = pet.play()
+    messagebox.showinfo("Play", msg)
+    pet.pass_time()
+    update_stats()
+
+def let_pet_sleep():
+    """Handle the 'Sleep' button press."""
+    msg = pet.sleep()
+    messagebox.showinfo("Sleep", msg)
+    pet.pass_time()
+    update_stats()
+
+# Initialize the pet and GUI
+pet = VirtualPet("Fluffy")  # Default pet name
+
+root = tk.Tk()
+root.title("Virtual Pet")
+
+# Load and display the pet image
+pet_img = Image.open("pet_image.png")  # Replace with your pet image path
+pet_img = pet_img.resize((150, 150), Image.ANTIALIAS)  # Resize image
+pet_photo = ImageTk.PhotoImage(pet_img)
+
+image_label = tk.Label(root, image=pet_photo)
+image_label.pack(pady=10)
+
+# Create Sliders to display stats
+hunger_slider = tk.Scale(root, from_=0, to=100, orient="horizontal", label="Hunger")
+happiness_slider = tk.Scale(root, from_=0, to=100, orient="horizontal", label="Happiness")
+energy_slider = tk.Scale(root, from_=0, to=100, orient="horizontal", label="Energy")
+
+hunger_slider.pack(pady=5)
+happiness_slider.pack(pady=5)
+energy_slider.pack(pady=5)
+
+# Create Buttons for interactions
+feed_button = tk.Button(root, text="Feed Pet", command=feed_pet)
+play_button = tk.Button(root, text="Play with Pet", command=play_with_pet)
+sleep_button = tk.Button(root, text="Let Pet Sleep", command=let_pet_sleep)
+
+feed_button.pack(pady=5)
+play_button.pack(pady=5)
+sleep_button.pack(pady=5)
+
+# Start the GUI event loop
+update_stats()  # Initial stat update
+root.mainloop()
